@@ -8,6 +8,11 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
+    globalSetup: ["./src/test/globalSetup.ts"],
+    fileParallelism: false,
+    env: {
+      DATABASE_URL: "file:./test.db",
+    },
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
     exclude: ["node_modules", ".next", "generated"],
     passWithNoTests: true,
