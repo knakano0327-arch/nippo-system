@@ -28,11 +28,11 @@ export async function POST(req: NextRequest) {
     isManager: user.isManager,
   };
 
-  await setSession(payload);
-
+  const token = await setSession(payload);
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
   return successResponse({
+    token,
     expires_at: expiresAt,
     user: {
       id: user.id,
