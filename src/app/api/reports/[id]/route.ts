@@ -91,3 +91,28 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   return successResponse(formatReportDetail(updated!));
 }
+
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getSession();
+  if (!session) return errorResponse(ErrorCode.UNAUTHORIZED, "認証が必要です");
+
+  const { id } = await params;
+  const reportId = Number(id);
+  if (!Number.isInteger(reportId) || reportId <= 0) {
+    return errorResponse(ErrorCode.NOT_FOUND, "日報が見つかりません");
+  }
+
+  const currentUserId = Number(session.sub);
+
+  const existing = await prisma.dailyReport.findUnique({ where: { id: reportId } });
+  if (!existing) {
+    return errorResponse(ErrorCode.NOT_FOUND, "日報が見つかりません");
+  }
+  if (existing.salespersonId !== currentUserId || existing.status !== "draft") {
+    return errorResponse(ErrorCode.FORBIDDEN, "アクセスが拒否されました");
+  }
+
+  await prisma.dailyReport.delete({ where: { id: reportId } });
+
+  return new Response(null, { status: 204 });
+}
