@@ -1,8 +1,10 @@
 import { type NextRequest } from "next/server";
-import { ErrorCode, errorResponse, paginatedResponse } from "@/lib/api";
+import { ErrorCode, errorResponse, paginatedResponse, parseBody, successResponse } from "@/lib/api";
 import { getSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
+import { createReportSchema } from "@/lib/validation/schemas/report.schema";
 import type { Prisma } from "../../../../generated/prisma/client";
+import { fetchReportDetail, formatReportDetail } from "./_shared";
 
 export async function GET(req: NextRequest) {
   const session = await getSession();
@@ -79,4 +81,45 @@ export async function GET(req: NextRequest) {
     per_page: perPage,
     total_pages: Math.ceil(total / perPage),
   });
+}
+
+export async function POST(req: NextRequest) {
+  const session = await getSession();
+  if (!session) return errorResponse(ErrorCode.UNAUTHORIZED, "認証が必要です");
+
+  const parsed = await parseBody(req, createReportSchema);
+  if (!parsed.ok) return parsed.response;
+
+  const body = parsed.data;
+  const currentUserId = Number(session.sub);
+  const reportDate = new Date(body.report_date);
+
+  const duplicate = await prisma.dailyReport.findFirst({
+    where: { salespersonId: currentUserId, reportDate },
+  });
+  if (duplicate) {
+    return errorResponse(ErrorCode.DUPLICATE_REPORT, "この日付の日報はすでに作成されています");
+  }
+
+  const created = await prisma.$transaction(async (tx) => {
+    const report = await tx.dailyReport.create({
+      data: {
+        salespersonId: currentUserId,
+        reportDate,
+        problem: body.problem ?? null,
+        plan: body.plan ?? null,
+        status: body.status,
+        visitRecords: {
+          create: body.visit_records.map((vr) => ({
+            customerId: vr.customer_id,
+            visitContent: vr.visit_content,
+            sortOrder: vr.sort_order,
+          })),
+        },
+      },
+    });
+    return fetchReportDetail(tx, report.id);
+  });
+
+  return successResponse(formatReportDetail(created!), 201);
 }
