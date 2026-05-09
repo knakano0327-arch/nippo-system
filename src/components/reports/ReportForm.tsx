@@ -31,9 +31,18 @@ import { VisitRecordList } from "./VisitRecordList";
 
 type Customer = { id: number; name: string };
 
+type InitialValues = {
+  report_date: string;
+  problem: string;
+  plan: string;
+  visit_records: Array<{ customer_id: number; visit_content: string }>;
+};
+
 type Props = {
   authorName: string;
   customers: Customer[];
+  reportId?: number;
+  initialValues?: InitialValues;
 };
 
 const visitRecordItemSchema = z.object({
@@ -63,15 +72,16 @@ function todayString(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-export function ReportForm({ authorName, customers }: Props) {
+export function ReportForm({ authorName, customers, reportId, initialValues }: Props) {
   const router = useRouter();
+  const isEditMode = reportId !== undefined;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [cancelOpen, setCancelOpen] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(reportFormSchema),
-    defaultValues: {
+    defaultValues: initialValues ?? {
       report_date: todayString(),
       problem: "",
       plan: "",
@@ -83,8 +93,11 @@ export function ReportForm({ authorName, customers }: Props) {
     setIsSubmitting(true);
     setApiError(null);
     try {
-      const res = await fetch("/api/reports", {
-        method: "POST",
+      const url = isEditMode ? `/api/reports/${reportId}` : "/api/reports";
+      const method = isEditMode ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           report_date: data.report_date,
@@ -99,7 +112,7 @@ export function ReportForm({ authorName, customers }: Props) {
         }),
       });
 
-      if (res.status === 409) {
+      if (!isEditMode && res.status === 409) {
         form.setError("report_date", {
           message: "この日付の日報はすでに作成されています",
         });
@@ -111,11 +124,12 @@ export function ReportForm({ authorName, customers }: Props) {
         return;
       }
 
-      const created = await res.json();
+      const saved = await res.json();
+      const savedId = reportId ?? saved.id;
       if (status === "draft") {
         router.push("/");
       } else {
-        router.push(`/reports/${created.id}`);
+        router.push(`/reports/${savedId}`);
       }
     } finally {
       setIsSubmitting(false);
@@ -211,7 +225,9 @@ export function ReportForm({ authorName, customers }: Props) {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>作成を中止しますか？</DialogTitle>
+                <DialogTitle>
+                  {isEditMode ? "編集を中止しますか？" : "作成を中止しますか？"}
+                </DialogTitle>
                 <DialogDescription>未保存のデータはすべて失われます。</DialogDescription>
               </DialogHeader>
               <DialogFooter>
