@@ -1,8 +1,11 @@
-.PHONY: lint lint-fix format format-check test test-coverage build deploy-preview deploy-prod
+.PHONY: dev lint lint-fix format format-check test test-coverage build deploy-preview deploy-prod
 
 # --------------------------------------------------------------------------
 # 開発
 # --------------------------------------------------------------------------
+
+dev:
+	npm run dev
 
 lint:
 	npm run lint
