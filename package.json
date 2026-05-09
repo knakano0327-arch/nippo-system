@@ -70,6 +70,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@prisma/adapter-better-sqlite3": "^7.8.0",
     "better-sqlite3": "^12.9.0",
+    "jose": "^6.2.3",
     "radix-ui": "^1.4.3",
     "react-hook-form": "^7.75.0",
     "zod": "^4.4.3"
