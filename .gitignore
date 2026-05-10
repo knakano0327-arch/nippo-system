@@ -30,6 +30,13 @@ test.db-journal
 # Test coverage
 coverage/
 
+# Playwright
+playwright-report/
+test-results/
+
+# Prisma schema backup (created by vercel-build.sh)
+prisma/schema.sqlite.bak
+
 # Misc
 .DS_Store
 *.pem
