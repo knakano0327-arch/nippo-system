@@ -13,8 +13,8 @@ import { DELETE, GET as DETAIL, PUT } from "../[id]/route";
 const mockGetSession = vi.mocked(getSession);
 const mockPrisma = vi.mocked(prisma, true);
 
-const managerSession = { sub: "5", email: "admin@test.com", isManager: true };
-const salesSession = { sub: "1", email: "yamada@test.com", isManager: false };
+const managerSession = { sub: "5", email: "admin@test.com", isManager: false, isAdmin: true };
+const salesSession = { sub: "1", email: "yamada@test.com", isManager: false, isAdmin: false };
 
 const existingCustomer = {
   id: 10,

@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
     sub: String(user.id),
     email: user.email,
     isManager: user.isManager,
+    isAdmin: user.isAdmin,
   };
 
   const token = await setSession(payload);
@@ -40,6 +41,7 @@ export async function POST(req: NextRequest) {
       email: user.email,
       department: user.department,
       is_manager: user.isManager,
+      is_admin: user.isAdmin,
     },
   });
 }

@@ -12,8 +12,8 @@ import { GET } from "../route";
 const mockGetSession = vi.mocked(getSession);
 const mockPrisma = vi.mocked(prisma, true);
 
-const managerSession = { sub: "5", email: "suzuki@test.com", isManager: true };
-const salesSession = { sub: "1", email: "yamada@test.com", isManager: false };
+const managerSession = { sub: "5", email: "suzuki@test.com", isManager: true, isAdmin: false };
+const salesSession = { sub: "1", email: "yamada@test.com", isManager: false, isAdmin: false };
 
 const makeReport = (overrides = {}) => ({
   id: 101,

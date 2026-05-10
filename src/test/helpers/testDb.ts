@@ -25,6 +25,7 @@ export interface TestUser {
   email: string;
   name: string;
   isManager: boolean;
+  isAdmin: boolean;
 }
 
 export interface TestCustomer {
@@ -78,7 +79,8 @@ export async function seedTestData(): Promise<SeedResult> {
         email: "admin@test.com",
         passwordHash,
         department: "管理部",
-        isManager: true,
+        isManager: false,
+        isAdmin: true,
       },
     }),
   ]);
@@ -93,10 +95,34 @@ export async function seedTestData(): Promise<SeedResult> {
   ]);
 
   return {
-    yamada: { id: yamada.id, email: yamada.email, name: yamada.name, isManager: yamada.isManager },
-    tanaka: { id: tanaka.id, email: tanaka.email, name: tanaka.name, isManager: tanaka.isManager },
-    suzuki: { id: suzuki.id, email: suzuki.email, name: suzuki.name, isManager: suzuki.isManager },
-    admin: { id: admin.id, email: admin.email, name: admin.name, isManager: admin.isManager },
+    yamada: {
+      id: yamada.id,
+      email: yamada.email,
+      name: yamada.name,
+      isManager: yamada.isManager,
+      isAdmin: yamada.isAdmin,
+    },
+    tanaka: {
+      id: tanaka.id,
+      email: tanaka.email,
+      name: tanaka.name,
+      isManager: tanaka.isManager,
+      isAdmin: tanaka.isAdmin,
+    },
+    suzuki: {
+      id: suzuki.id,
+      email: suzuki.email,
+      name: suzuki.name,
+      isManager: suzuki.isManager,
+      isAdmin: suzuki.isAdmin,
+    },
+    admin: {
+      id: admin.id,
+      email: admin.email,
+      name: admin.name,
+      isManager: admin.isManager,
+      isAdmin: admin.isAdmin,
+    },
     aShoji: { id: aShoji.id, name: aShoji.name },
     bSeizo: { id: bSeizo.id, name: bSeizo.name },
   };

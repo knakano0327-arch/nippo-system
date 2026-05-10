@@ -1,5 +1,6 @@
 import { type NextRequest } from "next/server";
 import { ErrorCode, errorResponse, parseBody, successResponse } from "@/lib/api";
+import { canManageMaster } from "@/lib/auth/permissions";
 import { getSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
 import { customerSchema } from "@/lib/validation/schemas/customer.schema";
@@ -46,7 +47,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const session = await getSession();
   if (!session) return errorResponse(ErrorCode.UNAUTHORIZED, "認証が必要です");
 
-  if (!session.isManager) {
+  if (!canManageMaster(session)) {
     return errorResponse(ErrorCode.FORBIDDEN, "権限がありません");
   }
 
@@ -79,7 +80,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   const session = await getSession();
   if (!session) return errorResponse(ErrorCode.UNAUTHORIZED, "認証が必要です");
 
-  if (!session.isManager) {
+  if (!canManageMaster(session)) {
     return errorResponse(ErrorCode.FORBIDDEN, "権限がありません");
   }
 
