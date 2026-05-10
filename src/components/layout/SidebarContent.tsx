@@ -31,9 +31,9 @@ const NAV_ITEMS: NavItem[] = [
 
 export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
-  const { isManager } = useCurrentUser();
+  const { isAdmin } = useCurrentUser();
 
-  const visible = NAV_ITEMS.filter((item) => !item.adminOnly || isManager);
+  const visible = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
 
   return (
     <nav className="flex flex-col gap-1 p-4">

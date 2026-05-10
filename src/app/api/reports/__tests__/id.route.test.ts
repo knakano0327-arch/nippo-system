@@ -12,8 +12,8 @@ import { GET } from "../[id]/route";
 const mockGetSession = vi.mocked(getSession);
 const mockPrisma = vi.mocked(prisma, true);
 
-const salesSession = { sub: "1", email: "yamada@test.com", isManager: false };
-const managerSession = { sub: "5", email: "suzuki@test.com", isManager: true };
+const salesSession = { sub: "1", email: "yamada@test.com", isManager: false, isAdmin: false };
+const managerSession = { sub: "5", email: "suzuki@test.com", isManager: true, isAdmin: false };
 
 const makeFullReport = (overrides = {}) => ({
   id: 101,
@@ -84,7 +84,12 @@ describe("GET /api/reports/[id]", () => {
   });
 
   it("他人の日報は 403 を返す (AT-RPT-008)", async () => {
-    mockGetSession.mockResolvedValue({ sub: "2", email: "tanaka@test.com", isManager: false });
+    mockGetSession.mockResolvedValue({
+      sub: "2",
+      email: "tanaka@test.com",
+      isManager: false,
+      isAdmin: false,
+    });
     const res = await callGET("101");
     expect(res.status).toBe(403);
     const body = await res.json();

@@ -32,7 +32,8 @@ describe("AT-CST-001: 顧客登録 正常系", () => {
     vi.mocked(getSession).mockResolvedValue({
       sub: String(seed.admin.id),
       email: seed.admin.email,
-      isManager: true,
+      isManager: seed.admin.isManager,
+      isAdmin: seed.admin.isAdmin,
     });
 
     const req = new NextRequest("http://localhost/api/customers", {
@@ -54,7 +55,8 @@ describe("AT-CST-002: 顧客登録 管理者以外によるアクセスエラー
     vi.mocked(getSession).mockResolvedValue({
       sub: String(seed.yamada.id),
       email: seed.yamada.email,
-      isManager: false,
+      isManager: seed.yamada.isManager,
+      isAdmin: seed.yamada.isAdmin,
     });
 
     const req = new NextRequest("http://localhost/api/customers", {
@@ -74,7 +76,8 @@ describe("AT-CST-003: 顧客一覧取得 名前フィルター", () => {
     vi.mocked(getSession).mockResolvedValue({
       sub: String(seed.yamada.id),
       email: seed.yamada.email,
-      isManager: false,
+      isManager: seed.yamada.isManager,
+      isAdmin: seed.yamada.isAdmin,
     });
 
     const res = await customersGET(makeCustomersRequest({ name: "A商事" }));

@@ -5,7 +5,7 @@ import { CustomerForm } from "@/components/master/CustomerForm";
 export default async function NewCustomerPage() {
   const session = await getSession();
   if (!session) redirect("/login");
-  if (!session.isManager) redirect("/");
+  if (!session.isAdmin) redirect("/");
 
   return (
     <div className="flex flex-col gap-6">

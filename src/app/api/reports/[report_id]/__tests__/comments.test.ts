@@ -13,8 +13,8 @@ import { DELETE, PUT } from "../comments/[id]/route";
 const mockGetSession = vi.mocked(getSession);
 const mockPrisma = vi.mocked(prisma, true);
 
-const managerSession = { sub: "5", email: "suzuki@test.com", isManager: true };
-const salesSession = { sub: "1", email: "yamada@test.com", isManager: false };
+const managerSession = { sub: "5", email: "suzuki@test.com", isManager: true, isAdmin: false };
+const salesSession = { sub: "1", email: "yamada@test.com", isManager: false, isAdmin: false };
 
 const existingReport = { id: 101, salespersonId: 1, status: "submitted" };
 
@@ -170,7 +170,12 @@ describe("PUT /api/reports/[report_id]/comments/[id]", () => {
   });
 
   it("他人のコメントは 403 を返す", async () => {
-    mockGetSession.mockResolvedValue({ sub: "9", email: "other@test.com", isManager: true });
+    mockGetSession.mockResolvedValue({
+      sub: "9",
+      email: "other@test.com",
+      isManager: true,
+      isAdmin: false,
+    });
     const res = await callPUT("101", "301", validPutBody);
     expect(res.status).toBe(403);
     const body = await res.json();
@@ -240,7 +245,12 @@ describe("DELETE /api/reports/[report_id]/comments/[id]", () => {
   });
 
   it("他人のコメントは 403 を返す", async () => {
-    mockGetSession.mockResolvedValue({ sub: "9", email: "other@test.com", isManager: true });
+    mockGetSession.mockResolvedValue({
+      sub: "9",
+      email: "other@test.com",
+      isManager: true,
+      isAdmin: false,
+    });
     const res = await callDELETE("101", "301");
     expect(res.status).toBe(403);
   });

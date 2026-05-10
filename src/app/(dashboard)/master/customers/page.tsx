@@ -14,7 +14,7 @@ type Props = {
 export default async function CustomersPage({ searchParams }: Props) {
   const session = await getSession();
   if (!session) redirect("/login");
-  if (!session.isManager) redirect("/");
+  if (!session.isAdmin) redirect("/");
 
   const params = await searchParams;
   const name = params.name ?? "";
