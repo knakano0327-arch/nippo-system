@@ -30,6 +30,11 @@ test.db-journal
 # Test coverage
 coverage/
 
+# Playwright
+playwright-report/
+test-results/
+blob-report/
+
 # Misc
 .DS_Store
 *.pem
