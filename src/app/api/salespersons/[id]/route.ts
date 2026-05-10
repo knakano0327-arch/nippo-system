@@ -1,5 +1,6 @@
 import { type NextRequest } from "next/server";
 import { ErrorCode, errorResponse, parseBody, successResponse } from "@/lib/api";
+import { canManageMaster } from "@/lib/auth/permissions";
 import { hashPassword } from "@/lib/auth/password";
 import { getSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
@@ -28,7 +29,7 @@ function formatSalesperson(s: {
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session) return errorResponse(ErrorCode.UNAUTHORIZED, "認証が必要です");
-  if (!session.isManager) return errorResponse(ErrorCode.FORBIDDEN, "権限がありません");
+  if (!canManageMaster(session)) return errorResponse(ErrorCode.FORBIDDEN, "権限がありません");
 
   const { id } = await params;
   const salespersonId = Number(id);
@@ -47,7 +48,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session) return errorResponse(ErrorCode.UNAUTHORIZED, "認証が必要です");
-  if (!session.isManager) return errorResponse(ErrorCode.FORBIDDEN, "権限がありません");
+  if (!canManageMaster(session)) return errorResponse(ErrorCode.FORBIDDEN, "権限がありません");
 
   const { id } = await params;
   const salespersonId = Number(id);
@@ -99,7 +100,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session) return errorResponse(ErrorCode.UNAUTHORIZED, "認証が必要です");
-  if (!session.isManager) return errorResponse(ErrorCode.FORBIDDEN, "権限がありません");
+  if (!canManageMaster(session)) return errorResponse(ErrorCode.FORBIDDEN, "権限がありません");
 
   const { id } = await params;
   const salespersonId = Number(id);

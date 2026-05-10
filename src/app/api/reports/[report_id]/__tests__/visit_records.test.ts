@@ -13,7 +13,7 @@ import { DELETE, PUT } from "../visit_records/[id]/route";
 const mockGetSession = vi.mocked(getSession);
 const mockPrisma = vi.mocked(prisma, true);
 
-const salesSession = { sub: "1", email: "yamada@test.com", isManager: false };
+const salesSession = { sub: "1", email: "yamada@test.com", isManager: false, isAdmin: false };
 const draftReport = { id: 101, salespersonId: 1, status: "draft" };
 
 const createdRecord = {
@@ -79,7 +79,12 @@ describe("POST /api/reports/[report_id]/visit_records", () => {
   });
 
   it("他人の日報は 403 を返す", async () => {
-    mockGetSession.mockResolvedValue({ sub: "2", email: "tanaka@test.com", isManager: false });
+    mockGetSession.mockResolvedValue({
+      sub: "2",
+      email: "tanaka@test.com",
+      isManager: false,
+      isAdmin: false,
+    });
     const res = await callPOST("101", validBody);
     expect(res.status).toBe(403);
   });
@@ -151,7 +156,12 @@ describe("PUT /api/reports/[report_id]/visit_records/[id]", () => {
   });
 
   it("他人の日報は 403 を返す", async () => {
-    mockGetSession.mockResolvedValue({ sub: "2", email: "tanaka@test.com", isManager: false });
+    mockGetSession.mockResolvedValue({
+      sub: "2",
+      email: "tanaka@test.com",
+      isManager: false,
+      isAdmin: false,
+    });
     const res = await callPUT("101", "201", validBody);
     expect(res.status).toBe(403);
   });
@@ -221,7 +231,12 @@ describe("DELETE /api/reports/[report_id]/visit_records/[id]", () => {
   });
 
   it("他人の日報は 403 を返す", async () => {
-    mockGetSession.mockResolvedValue({ sub: "2", email: "tanaka@test.com", isManager: false });
+    mockGetSession.mockResolvedValue({
+      sub: "2",
+      email: "tanaka@test.com",
+      isManager: false,
+      isAdmin: false,
+    });
     const res = await callDELETE("101", "201");
     expect(res.status).toBe(403);
   });

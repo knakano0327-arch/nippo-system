@@ -7,6 +7,7 @@ export type CurrentUser = {
   name: string;
   email: string;
   isManager: boolean;
+  isAdmin: boolean;
 };
 
 const UserContext = createContext<CurrentUser | null>(null);

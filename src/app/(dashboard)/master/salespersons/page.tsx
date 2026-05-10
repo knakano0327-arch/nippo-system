@@ -13,7 +13,7 @@ type Props = {
 export default async function SalespersonsPage({ searchParams }: Props) {
   const session = await getSession();
   if (!session) redirect("/login");
-  if (!session.isManager) redirect("/");
+  if (!session.isAdmin) redirect("/");
 
   const params = await searchParams;
   const page = Math.max(1, Number(params.page ?? "1") || 1);

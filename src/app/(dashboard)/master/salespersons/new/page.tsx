@@ -5,7 +5,7 @@ import { SalespersonForm } from "@/components/master/SalespersonForm";
 export default async function NewSalespersonPage() {
   const session = await getSession();
   if (!session) redirect("/login");
-  if (!session.isManager) redirect("/");
+  if (!session.isAdmin) redirect("/");
 
   return (
     <div className="flex flex-col gap-6">

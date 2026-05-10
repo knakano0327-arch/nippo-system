@@ -11,7 +11,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const user = await prisma.salesperson.findFirst({
     where: { id: Number(session.sub), deletedAt: null },
-    select: { id: true, name: true, email: true, isManager: true },
+    select: { id: true, name: true, email: true, isManager: true, isAdmin: true },
   });
   if (!user) redirect("/login");
 

@@ -4,6 +4,7 @@ export type JwtPayload = {
   sub: string; // salesperson id (string)
   email: string;
   isManager: boolean;
+  isAdmin: boolean;
 };
 
 const SECRET = new TextEncoder().encode(
@@ -28,6 +29,7 @@ export async function verifyToken(token: string): Promise<JwtPayload> {
     sub: payload.sub as string,
     email: payload["email"] as string,
     isManager: payload["isManager"] as boolean,
+    isAdmin: (payload["isAdmin"] as boolean | undefined) ?? false,
   };
 }
 

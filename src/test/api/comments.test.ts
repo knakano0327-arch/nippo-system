@@ -44,6 +44,7 @@ describe("AT-CMT-001: コメント投稿 正常系", () => {
       sub: String(seed.suzuki.id),
       email: seed.suzuki.email,
       isManager: true,
+      isAdmin: false,
     });
 
     const req = new NextRequest(`http://localhost/api/reports/${report.id}/comments`, {
@@ -74,6 +75,7 @@ describe("AT-CMT-002: コメント投稿 営業による操作エラー", () => 
       sub: String(seed.yamada.id),
       email: seed.yamada.email,
       isManager: false,
+      isAdmin: false,
     });
 
     const req = new NextRequest(`http://localhost/api/reports/${report.id}/comments`, {

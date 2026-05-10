@@ -54,7 +54,6 @@ async function main() {
     },
   });
 
-  // 管理者: is_manager=true で代用（is_admin フラグは Issue #27 で追加予定）
   const admin = await prisma.salesperson.upsert({
     where: { email: "admin@test.com" },
     update: {},
@@ -63,7 +62,8 @@ async function main() {
       email: "admin@test.com",
       passwordHash,
       department: "管理部",
-      isManager: true,
+      isManager: false,
+      isAdmin: true,
     },
   });
 

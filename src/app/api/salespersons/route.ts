@@ -1,5 +1,6 @@
 import { type NextRequest } from "next/server";
 import { ErrorCode, errorResponse, paginatedResponse, parseBody, successResponse } from "@/lib/api";
+import { canManageMaster } from "@/lib/auth/permissions";
 import { hashPassword } from "@/lib/auth/password";
 import { getSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
@@ -28,7 +29,7 @@ function formatSalesperson(s: {
 export async function GET(req: NextRequest) {
   const session = await getSession();
   if (!session) return errorResponse(ErrorCode.UNAUTHORIZED, "認証が必要です");
-  if (!session.isManager) return errorResponse(ErrorCode.FORBIDDEN, "権限がありません");
+  if (!canManageMaster(session)) return errorResponse(ErrorCode.FORBIDDEN, "権限がありません");
 
   const { searchParams } = req.nextUrl;
   const department = searchParams.get("department") ?? undefined;
@@ -63,7 +64,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return errorResponse(ErrorCode.UNAUTHORIZED, "認証が必要です");
-  if (!session.isManager) return errorResponse(ErrorCode.FORBIDDEN, "権限がありません");
+  if (!canManageMaster(session)) return errorResponse(ErrorCode.FORBIDDEN, "権限がありません");
 
   const parsed = await parseBody(req, createSalespersonSchema);
   if (!parsed.ok) return parsed.response;

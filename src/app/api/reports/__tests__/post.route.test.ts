@@ -12,7 +12,7 @@ import { POST } from "../route";
 const mockGetSession = vi.mocked(getSession);
 const mockPrisma = vi.mocked(prisma, true);
 
-const salesSession = { sub: "1", email: "yamada@test.com", isManager: false };
+const salesSession = { sub: "1", email: "yamada@test.com", isManager: false, isAdmin: false };
 
 const fullReport = {
   id: 101,

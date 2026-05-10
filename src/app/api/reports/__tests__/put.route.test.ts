@@ -12,7 +12,7 @@ import { PUT } from "../[id]/route";
 const mockGetSession = vi.mocked(getSession);
 const mockPrisma = vi.mocked(prisma, true);
 
-const salesSession = { sub: "1", email: "yamada@test.com", isManager: false };
+const salesSession = { sub: "1", email: "yamada@test.com", isManager: false, isAdmin: false };
 
 const draftReport = {
   id: 101,
@@ -107,7 +107,12 @@ describe("PUT /api/reports/[id]", () => {
   });
 
   it("他人の日報は 403 を返す", async () => {
-    mockGetSession.mockResolvedValue({ sub: "2", email: "tanaka@test.com", isManager: false });
+    mockGetSession.mockResolvedValue({
+      sub: "2",
+      email: "tanaka@test.com",
+      isManager: false,
+      isAdmin: false,
+    });
     const res = await callPUT("101", validBody);
     expect(res.status).toBe(403);
     const body = await res.json();

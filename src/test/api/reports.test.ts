@@ -65,6 +65,7 @@ beforeEach(async () => {
     sub: String(seed.yamada.id),
     email: seed.yamada.email,
     isManager: false,
+    isAdmin: false,
   });
 });
 
@@ -180,6 +181,7 @@ describe("AT-RPT-006: 日報一覧取得 上長（全員分）", () => {
       sub: String(seed.suzuki.id),
       email: seed.suzuki.email,
       isManager: true,
+      isAdmin: false,
     });
 
     const res = await reportsGET(makeListRequest());
@@ -274,6 +276,7 @@ describe("AT-RPT-011: ステータス更新（確認済み）正常系", () => {
       sub: String(seed.suzuki.id),
       email: seed.suzuki.email,
       isManager: true,
+      isAdmin: false,
     });
 
     const req = new NextRequest(`http://localhost/api/reports/${report.id}/status`, {

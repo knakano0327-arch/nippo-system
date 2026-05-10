@@ -16,8 +16,8 @@ const mockGetSession = vi.mocked(getSession);
 const mockPrisma = vi.mocked(prisma, true);
 const mockHashPassword = vi.mocked(hashPassword);
 
-const managerSession = { sub: "5", email: "admin@test.com", isManager: true };
-const salesSession = { sub: "1", email: "yamada@test.com", isManager: false };
+const managerSession = { sub: "5", email: "admin@test.com", isManager: false, isAdmin: true };
+const salesSession = { sub: "1", email: "yamada@test.com", isManager: false, isAdmin: false };
 
 const existingSalesperson = {
   id: 1,

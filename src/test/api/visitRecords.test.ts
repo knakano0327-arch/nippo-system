@@ -38,6 +38,7 @@ beforeEach(async () => {
     sub: String(seed.yamada.id),
     email: seed.yamada.email,
     isManager: false,
+    isAdmin: false,
   });
 });
 

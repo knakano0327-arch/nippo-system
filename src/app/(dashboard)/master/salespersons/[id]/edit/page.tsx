@@ -10,7 +10,7 @@ type Props = {
 export default async function EditSalespersonPage({ params }: Props) {
   const session = await getSession();
   if (!session) redirect("/login");
-  if (!session.isManager) redirect("/");
+  if (!session.isAdmin) redirect("/");
 
   const { id } = await params;
   const salespersonId = Number(id);
