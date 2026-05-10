@@ -1,21 +1,20 @@
 import { PrismaClient } from "../../generated/prisma/client";
 
-function createPrismaClient() {
+// SQLite client is created via require() so the native better-sqlite3 module is
+// only loaded in environments that actually need it (local dev / tests).
+// Top-level imports would bundle the native module into the production build.
+function createSQLiteClient(dbUrl: string): PrismaClient {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { PrismaBetterSqlite3 } = require("@prisma/adapter-better-sqlite3");
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const path = require("path") as { resolve: (...args: string[]) => string };
+  const dbPath = path.resolve(dbUrl.replace(/^file:/, ""));
+  return new PrismaClient({ adapter: new PrismaBetterSqlite3({ url: dbPath }) });
+}
+
+function createPrismaClient(): PrismaClient {
   const dbUrl = process.env["DATABASE_URL"] ?? "file:./dev.db";
-
-  if (dbUrl.startsWith("file:")) {
-    // SQLite for local development — use the better-sqlite3 driver adapter
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { PrismaBetterSqlite3 } = require("@prisma/adapter-better-sqlite3");
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const path = require("path");
-    const dbPath = path.resolve(dbUrl.replace(/^file:/, ""));
-    const adapter = new PrismaBetterSqlite3({ url: dbPath });
-    return new PrismaClient({ adapter });
-  }
-
-  // PostgreSQL for production — native Prisma connection (no custom adapter)
-  return new PrismaClient();
+  return dbUrl.startsWith("file:") ? createSQLiteClient(dbUrl) : new PrismaClient();
 }
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
