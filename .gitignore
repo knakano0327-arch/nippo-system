@@ -35,6 +35,9 @@ playwright-report/
 test-results/
 blob-report/
 
+# Prisma schema backup (created by vercel-build.sh)
+prisma/schema.sqlite.bak
+
 # Misc
 .DS_Store
 *.pem
