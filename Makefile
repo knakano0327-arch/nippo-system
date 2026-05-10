@@ -1,4 +1,4 @@
-.PHONY: dev lint lint-fix format format-check test test-coverage build deploy-preview deploy-prod
+.PHONY: dev lint lint-fix format format-check test test-coverage test-e2e build deploy-preview deploy-prod
 
 # --------------------------------------------------------------------------
 # 開発
@@ -24,6 +24,9 @@ test:
 
 test-coverage:
 	npm run test:coverage
+
+test-e2e:
+	npm run test:e2e
 
 build:
 	npm run build
