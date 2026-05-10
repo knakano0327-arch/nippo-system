@@ -28,6 +28,9 @@ export function canEditReport(
   return Number(user.sub) === report.salespersonId && report.status === "draft";
 }
 
+/** 日報を削除できるか（本人かつ下書き — 編集と同じ条件） */
+export const canDeleteReport = canEditReport;
+
 /** 日報を確認済みにできるか（上長 or 管理者） */
 export function canReviewReport(user: UserLike): boolean {
   return isManager(user) || isAdmin(user);

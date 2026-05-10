@@ -1,30 +1,40 @@
 #!/bin/bash
 # Vercel production build script
-# Handles PostgreSQL schema switching when DATABASE_URL is a PostgreSQL URL.
+# Switches the Prisma schema provider to PostgreSQL when DATABASE_URL is a PostgreSQL URL,
+# then generates the client, applies the schema, and builds Next.js.
 set -e
 
 echo "Starting Vercel production build..."
 
-# Detect database type from DATABASE_URL
 if [[ "${DATABASE_URL}" == postgresql://* ]] || [[ "${DATABASE_URL}" == postgres://* ]]; then
-  echo "PostgreSQL detected — switching Prisma schema to PostgreSQL..."
-  cp prisma/schema.prisma prisma/schema.sqlite.bak
-  cp prisma/schema.postgresql.prisma prisma/schema.prisma
-  SWITCHED_SCHEMA=true
+  echo "PostgreSQL detected — switching schema provider..."
+  # Replace the provider line in-place (Vercel runs in an ephemeral container so this is safe)
+  sed -i 's/provider = "sqlite"/provider = "postgresql"\n  url      = env("DATABASE_URL")/' prisma/schema.prisma
+
+  echo "Generating Prisma client..."
+  npx prisma generate
+
+  # prisma migrate deploy requires migration files written for the target database dialect.
+  # The existing migrations under prisma/migrations/ were generated for SQLite (PRAGMA syntax)
+  # and cannot run against PostgreSQL.
+  #
+  # For the initial deployment, use `prisma db push` which applies the schema directly
+  # without executing migration files.  For subsequent schema changes, generate
+  # PostgreSQL-native migrations with:
+  #   DATABASE_URL=<postgres-url> npx prisma migrate dev --name <description>
+  # and commit the resulting migration file alongside the schema change.
+  echo "Applying schema to database..."
+  npx prisma db push --accept-data-loss
+
+else
+  echo "Generating Prisma client..."
+  npx prisma generate
+
+  echo "Applying database migrations..."
+  npx prisma migrate deploy
 fi
-
-echo "Generating Prisma client..."
-npx prisma generate
-
-echo "Applying database migrations..."
-npx prisma migrate deploy
 
 echo "Building Next.js application..."
 npx next build
-
-# Restore SQLite schema so local dev isn't affected if running in a non-ephemeral env
-if [[ "${SWITCHED_SCHEMA}" == "true" ]]; then
-  mv prisma/schema.sqlite.bak prisma/schema.prisma
-fi
 
 echo "Build complete."
